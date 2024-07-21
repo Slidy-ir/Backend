@@ -1,5 +1,6 @@
 import {
   BaseEntity,
+  BeforeInsert,
   Column,
   CreateDateColumn,
   Entity,
@@ -7,6 +8,7 @@ import {
 } from "typeorm";
 import { UserPurposeOfUse } from "../enums/user.enums";
 import { Field, ObjectType } from "type-graphql";
+import { hashPassword } from "../utils/authentication";
 
 // Todo -> Add avatar field when the files system is done
 // Todo -> Add Trial fields when the subscription is implemented
@@ -17,24 +19,23 @@ import { Field, ObjectType } from "type-graphql";
 class User extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn()
-  id?: number;
+  id!: number;
   @Field()
   @Column()
-  full_name?: string;
+  full_name!: string;
   @Field()
   @Column()
-  email?: string;
+  email!: string;
   @Field()
   @Column()
-  password?: string;
+  password!: string;
   @Field()
-  @Column({ type: "boolean", default: false })
-  is_active?: boolean;
-
+  @Column({ type: "boolean", default: true })
+  is_active!: boolean;
   // User work information
   @Field()
   @Column({ type: "enum", enum: UserPurposeOfUse })
-  work_field?: UserPurposeOfUse;
+  work_field!: UserPurposeOfUse;
   @Field()
   @Column({ nullable: true })
   job?: string;
@@ -44,9 +45,13 @@ class User extends BaseEntity {
   @Field()
   @Column({ nullable: true })
   company_size?: string;
-
   @CreateDateColumn()
-  created_at?: boolean;
+  created_at!: boolean;
+
+  @BeforeInsert()
+  async hashPassword() {
+    this.password = await hashPassword.pwdToHash(this.password);
+  }
 }
 
 export default User;

@@ -8,7 +8,7 @@ class UserSerivce {
     > = AppDataSource.getRepository(User)
   ) {}
 
-  //   async createUser() {}
+    async changePassword() {}
 }
 
 export default new UserSerivce();

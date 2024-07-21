@@ -7,8 +7,6 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 
-// Todo -> Add pre save method to set the expire at
-
 @Entity()
 class RegisterationToken extends BaseEntity {
   @PrimaryGeneratedColumn()

@@ -1,6 +1,6 @@
 import { DataSource } from "typeorm";
 import User from "../models/user.model";
-import RegisterationToken from "../models/registeration-token.model";
+import Token from "../models/token.model";
 const {
   POSTGRES_HOST,
   POSTGRES_PORT,
@@ -8,6 +8,7 @@ const {
   POSTGRES_USER,
   POSTGRES_DB,
 } = process.env;
+import RegisterationToken from "../models/registeration-token.model";
 
 const AppDataSource = new DataSource({
   type: "postgres",
@@ -17,7 +18,7 @@ const AppDataSource = new DataSource({
   database: POSTGRES_DB,
   username: POSTGRES_USER,
   synchronize: true,
-  entities: [User, RegisterationToken],
+  entities: [User, RegisterationToken, Token],
 });
 
 export default AppDataSource;
