@@ -12,9 +12,11 @@ type EmailOptions = {
 };
 export const enum EmailTemplates {
   VERIFICATION_LINK = "register/mail-confirmation",
+  RESET_PASSWORD = "reset-password/reset-password-link"
 }
 const emailSubjects: Record<EmailTemplates, string> = {
   [EmailTemplates.VERIFICATION_LINK]: "لینک اعتبارسنجی ایمیل",
+  [EmailTemplates.RESET_PASSWORD]: "بازنشانی رمزعبور",
 };
 class MailServices {
   private transporter: ReturnType<typeof nodemailer.createTransport> =

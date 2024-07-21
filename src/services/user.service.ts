@@ -8,7 +8,9 @@ class UserSerivce {
     > = AppDataSource.getRepository(User)
   ) {}
 
-    async changePassword() {}
+  // async (phone: number, fullName: string) {
+      
+  //   }
 }
 
 export default new UserSerivce();

@@ -7,27 +7,33 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 
+export enum TempTokenType {
+  REGISTER = "register",
+  RESET_PASSWORD = "reset_password",
+}
+
 @Entity()
-class RegisterationToken extends BaseEntity {
+class TempToken extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id?: number;
+  id!: number;
   @Column()
-  email?: string;
+  email!: string;
   @Column()
-  token?: string;
+  token!: string;
   @CreateDateColumn()
-  created_at?: string;
+  created_at!: string;
   @Column({ default: false })
   is_verified!: boolean;
   @Column({ type: "timestamp without time zone" })
-  expire_at?: string;
-
+  expire_at!: string;
+  @Column({ type: "enum", enum: TempTokenType })
+  type?: TempTokenType;
   @BeforeInsert()
   async setExpireDate() {
     const date = new Date();
-    date.setDate(date.getDate() + 1);
+    date.setTime(date.getTime() + 1);
     this.expire_at = date.toString();
   }
 }
 
-export default RegisterationToken;
+export default TempToken;

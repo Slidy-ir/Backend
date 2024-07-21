@@ -1,6 +1,7 @@
 import {
   BaseEntity,
   BeforeInsert,
+  BeforeUpdate,
   Column,
   CreateDateColumn,
   Entity,
@@ -49,7 +50,8 @@ class User extends BaseEntity {
   created_at!: boolean;
 
   @BeforeInsert()
-  async hashPassword() {
+  @BeforeUpdate()
+  async encodePassword() {
     this.password = await hashPassword.pwdToHash(this.password);
   }
 }

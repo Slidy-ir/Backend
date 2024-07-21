@@ -6,6 +6,13 @@ import { UserPurposeOfUse } from "../enums/user.enums";
 import Response, { RESPONSE_STATUS, ResponseType } from "../utils/response";
 
 @InputType()
+class ResetPasswordInput {
+  @Field()
+  token!: string;
+  @Field()
+  password!: string;
+}
+@InputType()
 class VerifiyEmailInputs {
   @Field()
   token!: string;
@@ -100,9 +107,33 @@ class AuthenticationResolver {
   async LOGIN_WITH_USER_PASSWORD_MUTATION(
     @Arg("data") loginData: LoginWithUserPasswordInput
   ) {
-    const data = await AuthenticationService.login(loginData.email, loginData.password);
+    const data = await AuthenticationService.login(
+      loginData.email,
+      loginData.password
+    );
 
-    return Response("با موفقیت وارد شدید", RESPONSE_STATUS.SUCCESS,data);
+    return Response("با موفقیت وارد شدید", RESPONSE_STATUS.SUCCESS, data);
+  }
+  @Mutation(() => ResponseType)
+  async REQUEST_RESET_PASSWORD_MUTATION(@Arg("email") email: string) {
+    const link = await AuthenticationService.requestResetPassword(email);
+    await MailServices.send({
+      to: email,
+      template: EmailTemplates.RESET_PASSWORD,
+      context: { link },
+    });
+    return Response(
+      "لینک بازنشانی رمز عبور به ایمیل شما ارسال شد",
+      RESPONSE_STATUS.SUCCESS
+    );
+  }
+  @Mutation(() => ResponseType)
+  async RESET_PASSWOR_MUTATION(@Arg("data") resetPassData: ResetPasswordInput) {
+    await AuthenticationService.resetPassword(
+      resetPassData.token,
+      resetPassData.password
+    );
+    return Response("رمز عبور با موفقیت تغییر یافت", RESPONSE_STATUS.SUCCESS);
   }
 }
 

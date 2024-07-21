@@ -1,4 +1,4 @@
-import RegisterationToken from "../models/registeration-token.model";
+import TempToken, { TempTokenType } from "../models/temp-token.model";
 import AppDataSource from "../config/database";
 import User from "../models/user.model";
 import { createToken } from "../utils/create-token";
@@ -11,11 +11,13 @@ import { hashPassword } from "../utils/authentication";
 class AuthenticationService {
   private userRepository = AppDataSource.getRepository(User);
   private tokenRepository = AppDataSource.getRepository(Token);
-  private registerationTokenRrepository =
-    AppDataSource.getRepository(RegisterationToken);
+  private tempTokenRepository = AppDataSource.getRepository(TempToken);
 
   async verificationRequest(email: string) {
-    await this.registerationTokenRrepository.delete({ email });
+    await this.tempTokenRepository.delete({
+      email,
+      type: TempTokenType.REGISTER,
+    });
     // check if email does exists ,if so, reject the request
     const user = await this.userRepository.findOne({ where: { email } });
     if (user)
@@ -24,26 +26,22 @@ class AuthenticationService {
         ERROR_CODES.CONFLICT
       );
     // create and save the new registeration token
-    const registerationToken = this.registerationTokenRrepository.create({
+    const tempToken = this.tempTokenRepository.create({
       email,
       token: createToken(email),
+      type: TempTokenType.REGISTER,
     });
-    await registerationToken.save();
+    await tempToken.save();
     // generate and return the verification url
-    return `https://slidy.ir/register/complete/${registerationToken.token}`;
+    return `https://slidy.ir/register/complete/${tempToken.token}`;
   }
 
   async verifyEmail(email: string, token: string) {
     // get the registeration token entry and check if its expired , if so , reject request
-    const registerationToken = await this.registerationTokenRrepository.findOne(
-      {
-        where: { token, email },
-      }
-    );
-    if (
-      !registerationToken ||
-      new Date(registerationToken?.expire_at as string) < new Date()
-    ) {
+    const tempToken = await this.tempTokenRepository.findOne({
+      where: { token, email, type: TempTokenType.REGISTER },
+    });
+    if (!tempToken || new Date(tempToken?.expire_at as string) < new Date()) {
       throw new ApolloError(
         "زمان اعتبار لینک تایید منقصی شده",
         ERROR_CODES.UN_AUTHORIZED
@@ -51,10 +49,9 @@ class AuthenticationService {
     }
 
     // update the registration token to verified
-    await this.registerationTokenRrepository.update(
-      registerationToken?.id as number,
-      { is_verified: true }
-    );
+    await this.tempTokenRepository.update(tempToken?.id as number, {
+      is_verified: true,
+    });
   }
 
   async register(
@@ -67,12 +64,10 @@ class AuthenticationService {
     company_size: string | undefined
   ) {
     // check if email is verified or not  ,if not, reject the request
-    const registerationToken = await this.registerationTokenRrepository.findOne(
-      {
-        where: { email, is_verified: true },
-      }
-    );
-    if (!registerationToken) {
+    const tempToken = await this.tempTokenRepository.findOne({
+      where: { email, is_verified: true, type: TempTokenType.REGISTER },
+    });
+    if (!tempToken) {
       throw new ApolloError(
         "ایمیل وارد شده تایید نشده است",
         ERROR_CODES.UN_AUTHORIZED
@@ -94,7 +89,7 @@ class AuthenticationService {
     // generate new token for uthentication
     const token = await this.generateLoginToken(email, user.id);
     // delete the registeration token after user registeration is complete
-    await this.registerationTokenRrepository.delete({ email });
+    await this.tempTokenRepository.delete({ email });
     return { user, token };
   }
 
@@ -135,6 +130,47 @@ class AuthenticationService {
     await loginToken.save();
 
     return loginToken.access_token;
+  }
+
+  async requestResetPassword(email: string) {
+    // check if email does exists ,if not, reject the request
+    const user = await this.userRepository.findOne({ where: { email } });
+    if (!user)
+      throw new ApolloError(
+        "کاربری با ایمیل وارد شده موجود نمیباشد",
+        ERROR_CODES.CONFLICT
+      );
+    // create and save the new registeration token
+    const tempToken = this.tempTokenRepository.create({
+      email,
+      token: createToken(email),
+      type: TempTokenType.RESET_PASSWORD,
+    });
+    await tempToken.save();
+    // generate and return the verification url
+    return `https://slidy.ir/reset-password/${tempToken.token}`;
+  }
+  async resetPassword(token: string, password: string) {
+    const tempToken = await this.tempTokenRepository.findOne({
+      where: { token: token, type: TempTokenType.RESET_PASSWORD },
+    });
+    if (!tempToken || new Date(tempToken.expire_at) < new Date())
+      throw new ApolloError(
+        "توکن ارسالی نامعتبر میباشد",
+        ERROR_CODES.UN_AUTHORIZED
+      );
+    const user = await this.userRepository.findOne({
+      where: { email: tempToken?.email },
+    });
+
+    if (user) {
+      user.password = password;
+      await this.userRepository.save(user);
+    } else {
+      throw new Error("User not found");
+    }
+
+    await this.tempTokenRepository.delete({ id: tempToken.id });
   }
 }
 

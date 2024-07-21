@@ -16,7 +16,9 @@ input LoginWithUserPasswordInput {
 type Mutation {
   LOGIN_WITH_USER_PASSWORD_MUTATION(data: LoginWithUserPasswordInput!): ResponseType!
   REGISTER_MUTATION(data: RegisterInputs!): ResponseType!
+  REQUEST_RESET_PASSWORD_MUTATION(email: String!): ResponseType!
   REQUEST_VERIFICATION_MUTATION(email: String!): ResponseType
+  RESET_PASSWOR_MUTATION(data: ResetPasswordInput!): ResponseType!
   VERIFY_EMAIL_MUTATION(data: VerifiyEmailInputs!): ResponseType
 }
 
@@ -32,6 +34,11 @@ input RegisterInputs {
   job: String
   password: String!
   work_field: String!
+}
+
+input ResetPasswordInput {
+  password: String!
+  token: String!
 }
 
 type ResponseType {

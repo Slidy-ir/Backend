@@ -8,7 +8,7 @@ const {
   POSTGRES_USER,
   POSTGRES_DB,
 } = process.env;
-import RegisterationToken from "../models/registeration-token.model";
+import TempToken from "../models/temp-token.model";
 
 const AppDataSource = new DataSource({
   type: "postgres",
@@ -18,7 +18,7 @@ const AppDataSource = new DataSource({
   database: POSTGRES_DB,
   username: POSTGRES_USER,
   synchronize: true,
-  entities: [User, RegisterationToken, Token],
+  entities: [User, TempToken, Token],
 });
 
 export default AppDataSource;
