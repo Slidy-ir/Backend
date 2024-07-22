@@ -1,0 +1,44 @@
+{
+  "name": "slidy-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "compile": "tsc && node ./dist/src/main.js",
+    "dev": "nodemon -e ts --exec \" ncp ./src/templates ./dist/src/templates  && npm run compile \""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Slidy-ir/Backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Slidy-ir/Backend/issues"
+  },
+  "homepage": "https://github.com/Slidy-ir/Backend#readme",
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/node": "^20.14.11",
+    "@types/nodemailer": "^6.4.15",
+    "ncp": "^2.0.0",
+    "nodemon": "^3.1.4",
+    "typescript": "^5.5.3"
+  },
+  "dependencies": {
+    "apollo-server-express": "^3.13.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-handlebars": "^7.1.3",
+    "express-validator": "^7.1.0",
+    "graphql-type-json": "^0.3.2",
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^6.9.14",
+    "pg": "^8.12.0",
+    "type-graphql": "^2.0.0-rc.2",
+    "typeorm": "^0.3.20"
+  }
+}

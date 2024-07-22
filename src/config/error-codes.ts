@@ -1,0 +1,5 @@
+export const enum ERROR_CODES {
+    CONFLICT = "CONFLICT",
+    BAD_REQUEST = "BAD_REQUEST",
+    UN_AUTHORIZED="UN_AUTHORIZED"
+}
