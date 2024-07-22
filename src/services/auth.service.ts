@@ -14,6 +14,7 @@ class AuthenticationService {
   private tempTokenRepository = AppDataSource.getRepository(TempToken);
 
   async verificationRequest(email: string) {
+    // delete the prev temp token if there was any
     await this.tempTokenRepository.delete({
       email,
       type: TempTokenType.REGISTER,
@@ -37,11 +38,11 @@ class AuthenticationService {
   }
 
   async verifyEmail(email: string, token: string) {
-    // get the registeration token entry and check if its expired , if so , reject request
-    const tempToken = await this.tempTokenRepository.findOne({
+    // get the registeration token and check if its expired , if so , reject request
+    const tempToken = await this.tempTokenRepository.findOneOrFail({
       where: { token, email, type: TempTokenType.REGISTER },
     });
-    if (!tempToken || new Date(tempToken?.expire_at as string) < new Date()) {
+    if (new Date(tempToken?.expire_at as string) < new Date()) {
       throw new ApolloError(
         "زمان اعتبار لینک تایید منقصی شده",
         ERROR_CODES.UN_AUTHORIZED
@@ -63,8 +64,8 @@ class AuthenticationService {
     company_website: string | undefined,
     company_size: string | undefined
   ) {
-    // check if email is verified or not  ,if not, reject the request
-    const tempToken = await this.tempTokenRepository.findOne({
+    // check if email is verified or not ,if not, reject the request
+    const tempToken = await this.tempTokenRepository.findOneOrFail({
       where: { email, is_verified: true, type: TempTokenType.REGISTER },
     });
     if (!tempToken) {
@@ -86,7 +87,7 @@ class AuthenticationService {
     });
     await user.save();
 
-    // generate new token for uthentication
+    // generate new token for uathentication
     const token = await this.generateLoginToken(email, user.id);
     // delete the registeration token after user registeration is complete
     await this.tempTokenRepository.delete({ email });
@@ -94,6 +95,7 @@ class AuthenticationService {
   }
 
   async login(email: string, password: string) {
+    // check if user exists
     const user = await this.userRepository.findOne({ where: { email } });
 
     if (!user)
@@ -101,14 +103,14 @@ class AuthenticationService {
         "کاربری با ایمیل وارد شده موحود نمیباشد",
         ERROR_CODES.UN_AUTHORIZED
       );
-
+    // check if password is correct
     const isPasswordCorrect = hashPassword.pwdCompare(user.password, password);
     if (!isPasswordCorrect)
       throw new ApolloError(
         "نام کاربر یا رمز عبورد وارد شده اشتباه میباشد",
         ERROR_CODES.UN_AUTHORIZED
       );
-
+    // check if user is active or not
     if (!user.is_active)
       throw new ApolloError(
         "حساب کاربری شما مسدود شده است",
@@ -133,7 +135,7 @@ class AuthenticationService {
   }
 
   async requestResetPassword(email: string) {
-    // check if email does exists ,if not, reject the request
+    // check if user exists
     const user = await this.userRepository.findOne({ where: { email } });
     if (!user)
       throw new ApolloError(
@@ -151,25 +153,24 @@ class AuthenticationService {
     return `https://slidy.ir/reset-password/${tempToken.token}`;
   }
   async resetPassword(token: string, password: string) {
-    const tempToken = await this.tempTokenRepository.findOne({
+    // check if reset password request token exists and is not expired
+    const tempToken = await this.tempTokenRepository.findOneOrFail({
       where: { token: token, type: TempTokenType.RESET_PASSWORD },
     });
-    if (!tempToken || new Date(tempToken.expire_at) < new Date())
+    if (new Date(tempToken.expire_at) < new Date())
       throw new ApolloError(
         "توکن ارسالی نامعتبر میباشد",
         ERROR_CODES.UN_AUTHORIZED
       );
-    const user = await this.userRepository.findOne({
+
+    // get the related user and change the password
+    const user = await this.userRepository.findOneOrFail({
       where: { email: tempToken?.email },
     });
+    user.password = password;
+    await this.userRepository.save(user);
 
-    if (user) {
-      user.password = password;
-      await this.userRepository.save(user);
-    } else {
-      throw new Error("User not found");
-    }
-
+    // delete the temp token after success
     await this.tempTokenRepository.delete({ id: tempToken.id });
   }
 }
