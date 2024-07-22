@@ -125,7 +125,7 @@ class AuthenticationService {
   async generateLoginToken(email: string, user_id: number) {
     const token = createToken(email);
     const loginToken = this.tokenRepository.create({
-      user_id,
+      user: user_id,
       access_token: token,
     });
 
@@ -154,10 +154,10 @@ class AuthenticationService {
   }
   async resetPassword(token: string, password: string) {
     // check if reset password request token exists and is not expired
-    const tempToken = await this.tempTokenRepository.findOneOrFail({
+    const tempToken = await this.tempTokenRepository.findOne({
       where: { token: token, type: TempTokenType.RESET_PASSWORD },
     });
-    if (new Date(tempToken.expire_at) < new Date())
+    if (!tempToken || new Date(tempToken.expire_at) < new Date())
       throw new ApolloError(
         "توکن ارسالی نامعتبر میباشد",
         ERROR_CODES.UN_AUTHORIZED

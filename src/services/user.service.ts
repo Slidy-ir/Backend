@@ -2,15 +2,12 @@ import AppDataSource from "../config/database";
 import User from "../models/user.model";
 
 class UserSerivce {
-  constructor(
-    public repository: ReturnType<
-      typeof AppDataSource.getRepository<User>
-    > = AppDataSource.getRepository(User)
-  ) {}
+  private repository = AppDataSource.getRepository(User);
 
-  // async (phone: number, fullName: string) {
-      
-  //   }
+  async changeInformation(id: number, fullName: string) {
+    const user = this.repository.update({ id }, { full_name: fullName, });
+    return user;
+  }
 }
 
 export default new UserSerivce();

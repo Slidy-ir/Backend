@@ -3,6 +3,10 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+input ChangeUserInfoInputs {
+  full_name: String!
+}
+
 """
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
@@ -14,15 +18,17 @@ input LoginWithUserPasswordInput {
 }
 
 type Mutation {
+  CHANGE_USER_INFORMATION(data: ChangeUserInfoInputs!): ResponseType!
   LOGIN_WITH_USER_PASSWORD_MUTATION(data: LoginWithUserPasswordInput!): ResponseType!
   REGISTER_MUTATION(data: RegisterInputs!): ResponseType!
   REQUEST_RESET_PASSWORD_MUTATION(email: String!): ResponseType!
   REQUEST_VERIFICATION_MUTATION(email: String!): ResponseType
-  RESET_PASSWOR_MUTATION(data: ResetPasswordInput!): ResponseType!
+  RESET_PASSWORD_MUTATION(data: ResetPasswordInput!): ResponseType!
   VERIFY_EMAIL_MUTATION(data: VerifiyEmailInputs!): ResponseType
 }
 
 type Query {
+  USER_QUERY: String!
   user: String!
 }
 
