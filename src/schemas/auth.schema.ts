@@ -124,7 +124,7 @@ class AuthenticationResolver {
     );
   }
   @Mutation(() => ResponseType)
-  async RESET_PASSWOR_MUTATION(@Arg("data") resetPassData: ResetPasswordInput) {
+  async RESET_PASSWORD_MUTATION(@Arg("data") resetPassData: ResetPasswordInput) {
     await AuthenticationService.resetPassword(
       resetPassData.token,
       resetPassData.password

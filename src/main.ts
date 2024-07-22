@@ -8,6 +8,7 @@ import { buildSchema } from "type-graphql";
 import AuthenticationResolver from "./schemas/auth.schema";
 import UserResolver from "./schemas/user.schema";
 import { CurrentUser } from "./middlewares/current-user.middleware";
+import AuthRequired from "./middlewares/auth-required.middleware";
 dotenv.config();
 
 const main = async () => {
@@ -31,6 +32,8 @@ const main = async () => {
       origin: "*",
     })
   );
+  application.use(CurrentUser);
+  application.use(AuthRequired);
   const schema = await buildSchema({
     resolvers: [AuthenticationResolver, UserResolver],
     emitSchemaFile: true,
@@ -45,7 +48,6 @@ const main = async () => {
     },
     context: ({ req }) => ({ user: req.user_id }),
   });
-  application.use(CurrentUser);
   apolloServer.start().then(() => {
     apolloServer.applyMiddleware({ app: application });
   });

@@ -31,7 +31,7 @@ class TempToken extends BaseEntity {
   @BeforeInsert()
   async setExpireDate() {
     const date = new Date();
-    date.setTime(date.getTime() + 1);
+    date.setHours(date.getHours() + 1);
     this.expire_at = date.toString();
   }
 }

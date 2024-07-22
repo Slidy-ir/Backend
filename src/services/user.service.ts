@@ -5,7 +5,7 @@ class UserSerivce {
   private repository = AppDataSource.getRepository(User);
 
   async changeInformation(id: number, fullName: string) {
-    const user = this.repository.update({ id }, { full_name: fullName });
+    const user = this.repository.update({ id }, { full_name: fullName, });
     return user;
   }
 }

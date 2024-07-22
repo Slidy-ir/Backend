@@ -28,7 +28,6 @@ class UserResolver {
     @Arg("data") userInfo: ChangeUserInfoInputs,
     @Ctx() ctx: Context<{ user: number }>
   ) {
-    console.log(ctx);
     await UserSerivce.changeInformation(ctx?.user, userInfo.full_name);
     return Response("اطلاعات شما با موفقیت ویرایش شد", RESPONSE_STATUS.SUCCESS);
   }

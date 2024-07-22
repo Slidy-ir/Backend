@@ -23,7 +23,7 @@ type Mutation {
   REGISTER_MUTATION(data: RegisterInputs!): ResponseType!
   REQUEST_RESET_PASSWORD_MUTATION(email: String!): ResponseType!
   REQUEST_VERIFICATION_MUTATION(email: String!): ResponseType
-  RESET_PASSWOR_MUTATION(data: ResetPasswordInput!): ResponseType!
+  RESET_PASSWORD_MUTATION(data: ResetPasswordInput!): ResponseType!
   VERIFY_EMAIL_MUTATION(data: VerifiyEmailInputs!): ResponseType
 }
 
