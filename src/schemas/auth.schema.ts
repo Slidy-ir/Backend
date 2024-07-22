@@ -61,10 +61,8 @@ class AuthenticationResolver {
       template: EmailTemplates.VERIFICATION_LINK,
       to: email,
     });
-
     return Response("لینک تایید با موفقیت ارسال شد", RESPONSE_STATUS.SUCCESS);
   }
-
   @Mutation(() => ResponseType, { nullable: true })
   async VERIFY_EMAIL_MUTATION(
     @Arg("data") verifyEmailData: VerifiyEmailInputs
@@ -76,7 +74,6 @@ class AuthenticationResolver {
 
     return Response("ایمیل با موفقیت تایید شد", RESPONSE_STATUS.SUCCESS);
   }
-
   @Mutation(() => ResponseType)
   async REGISTER_MUTATION(
     @Arg("data")
@@ -102,7 +99,6 @@ class AuthenticationResolver {
     );
     return Response("ایمیلی با موفقیت تایید شد", RESPONSE_STATUS.SUCCESS, data);
   }
-
   @Mutation(() => ResponseType)
   async LOGIN_WITH_USER_PASSWORD_MUTATION(
     @Arg("data") loginData: LoginWithUserPasswordInput
