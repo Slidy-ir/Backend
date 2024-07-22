@@ -123,7 +123,7 @@ class AuthenticationService {
   async generateLoginToken(email: string, user_id: number) {
     const token = createToken(email);
     const loginToken = this.tokenRepository.create({
-      user_id,
+      user:user_id,
       access_token: token,
     });
 

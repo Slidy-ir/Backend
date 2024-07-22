@@ -16,7 +16,7 @@ class Token extends BaseEntity {
   @Column()
   access_token!: string;
   @ManyToOne(() => User, (user) => user.id)
-  user_id!: number;
+  user!: number;
   @Column({ type: "timestamp without time zone" })
   expire_at!: string;
   @CreateDateColumn()
