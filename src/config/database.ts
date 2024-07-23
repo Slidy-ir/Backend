@@ -9,6 +9,7 @@ const {
   POSTGRES_DB,
 } = process.env;
 import TempToken from "../models/temp-token.model";
+import Presentation from "../models/presentation.model";
 
 const AppDataSource = new DataSource({
   type: "postgres",
@@ -18,7 +19,7 @@ const AppDataSource = new DataSource({
   database: POSTGRES_DB,
   username: POSTGRES_USER,
   synchronize: true,
-  entities: [User, TempToken, Token],
+  entities: [User, TempToken, Token,Presentation],
 });
 
 export default AppDataSource;
