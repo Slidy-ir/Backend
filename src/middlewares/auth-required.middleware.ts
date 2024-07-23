@@ -21,9 +21,9 @@ const AuthRequired = async (
       req.body.query.includes(route)
     );
 
-    if (isNonAuthRoute) {
+    if (!isNonAuthRoute) {
       const token = req.headers["authorization"]?.split(" ")[1];
-      if (token) {
+      if (!token) {
         return res.status(401).json({
           errors: [
             {
@@ -37,7 +37,6 @@ const AuthRequired = async (
       const session = await AppDataSource.getRepository(Token).findOne({
         where: { access_token: token },
       });
-
       if (!session || new Date(session?.expire_at) < new Date()) {
         return res.status(401).json({
           errors: [
@@ -50,6 +49,7 @@ const AuthRequired = async (
         });
       }
     }
+
     next();
   } catch (error) {
     next(error);
