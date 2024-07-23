@@ -19,6 +19,7 @@ input LoginWithUserPasswordInput {
 
 type Mutation {
   CHANGE_USER_INFORMATION(data: ChangeUserInfoInputs!): ResponseType!
+  DELETE_PRESENTATION_MUTATION(id: Float!): ResponseType!
   LOGIN_WITH_USER_PASSWORD_MUTATION(data: LoginWithUserPasswordInput!): ResponseType!
   REGISTER_MUTATION(data: RegisterInputs!): ResponseType!
   REQUEST_RESET_PASSWORD_MUTATION(email: String!): ResponseType!
@@ -28,6 +29,7 @@ type Mutation {
 }
 
 type Query {
+  PRESENTATIONS_LIST_QUERY(search: String): ResponseType!
   USER_QUERY: String!
   user: String!
 }

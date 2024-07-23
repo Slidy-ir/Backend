@@ -28,6 +28,7 @@ export const CurrentUser = async (
     if (session) {
       req.user_id = session.user;
       next();
+      return;
     }
   }
   next();

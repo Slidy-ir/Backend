@@ -12,7 +12,7 @@ export class ResponseType {
   message!: string;
   @Field()
   status!: RESPONSE_STATUS;
-  @Field(() =>  GraphQLJSON)
+  @Field(() => GraphQLJSON)
   data: any;
 }
 
