@@ -26,11 +26,14 @@ type Mutation {
   REQUEST_RESET_PASSWORD_MUTATION(email: String!): ResponseType!
   REQUEST_VERIFICATION_MUTATION(email: String!): ResponseType
   RESET_PASSWORD_MUTATION(data: ResetPasswordInput!): ResponseType!
+  USE_TEMPLATE_MUTATION(template_id: Float!): ResponseType!
   VERIFY_EMAIL_MUTATION(data: VerifiyEmailInputs!): ResponseType
 }
 
 type Query {
+  CATEGORIES_QUERY: ResponseType!
   PRESENTATIONS_LIST_QUERY(search: String): ResponseType!
+  TEMPLATES_QUERY(category_id: Float!): ResponseType!
   TRASHBIN_QUERY: ResponseType!
   USER_QUERY: String!
   user: String!

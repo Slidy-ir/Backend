@@ -11,6 +11,7 @@ import { CurrentUser } from "./middlewares/current-user.middleware";
 import AuthRequired from "./middlewares/auth-required.middleware";
 import PresentationsResolver from "./schemas/presentations.schema";
 import TrashbinResolver from "./schemas/trashbin.schema";
+import TemplatesResolver from "./schemas/templates.schema";
 dotenv.config();
 
 const main = async () => {
@@ -37,7 +38,13 @@ const main = async () => {
   application.use(CurrentUser);
   application.use(AuthRequired);
   const schema = await buildSchema({
-    resolvers: [AuthenticationResolver, UserResolver,PresentationsResolver,TrashbinResolver],
+    resolvers: [
+      AuthenticationResolver,
+      UserResolver,
+      PresentationsResolver,
+      TrashbinResolver,
+      TemplatesResolver,
+    ],
     emitSchemaFile: true,
   });
   const apolloServer = new ApolloServer({
