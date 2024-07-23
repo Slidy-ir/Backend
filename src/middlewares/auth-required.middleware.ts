@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import AppDataSource from "../config/database";
 import Token from "../models/token.model";
-import { ERROR_CODES } from "src/config/error-codes";
+import { ERROR_CODES } from "../config/error-codes";
 
 const nonAuthenticatedRoutes = [
   "RESET_PASSWORD_MUTATION",

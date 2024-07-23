@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import User from "./user.model";
-import { Field, ObjectType } from "type-graphql";
+import { Field, GraphQLTimestamp, ObjectType } from "type-graphql";
 
 // Todo -> Add User type when implementing team system
 // Todo -> Add owner relation to team when implementing team system
@@ -31,9 +31,9 @@ class Presentation extends BaseEntity {
   @Field()
   @CreateDateColumn()
   created_at!: string;
-  @Field()
-  @DeleteDateColumn()
-  deleted_at!: string;
+  @Field(()=>GraphQLTimestamp)
+  @DeleteDateColumn({type:"timestamp", nullable: true })
+  deleted_at?: Date | null;
   @Field()
   @UpdateDateColumn()
   last_update?: string;
