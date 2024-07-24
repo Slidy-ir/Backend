@@ -3,14 +3,10 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
-input ChangeUserInfoInputs {
-  full_name: String!
+type BaseResponseType {
+  message: String!
+  status: String!
 }
-
-"""
-The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-"""
-scalar JSON
 
 input LoginWithUserPasswordInput {
   email: String!
@@ -18,24 +14,33 @@ input LoginWithUserPasswordInput {
 }
 
 type Mutation {
-  CHANGE_USER_INFORMATION(data: ChangeUserInfoInputs!): ResponseType!
-  DELETE_PERSENTATION_PERMENANTLY_MUTATION(id: Float!): ResponseType!
-  DELETE_PRESENTATION_MUTATION(id: Float!): ResponseType!
-  LOGIN_WITH_USER_PASSWORD_MUTATION(data: LoginWithUserPasswordInput!): ResponseType!
-  REGISTER_MUTATION(data: RegisterInputs!): ResponseType!
-  REQUEST_RESET_PASSWORD_MUTATION(email: String!): ResponseType!
-  REQUEST_VERIFICATION_MUTATION(email: String!): ResponseType
-  RESET_PASSWORD_MUTATION(data: ResetPasswordInput!): ResponseType!
-  USE_TEMPLATE_MUTATION(template_id: Float!): ResponseType!
-  VERIFY_EMAIL_MUTATION(data: VerifiyEmailInputs!): ResponseType
+  DELETE_PRESENTATION_MUTATION(id: Float!): BaseResponseType!
+  LOGIN_WITH_USER_PASSWORD_MUTATION(data: LoginWithUserPasswordInput!): UserResponseType!
+  REGISTER_MUTATION(data: RegisterInputs!): UserResponseType!
+  REQUEST_RESET_PASSWORD_MUTATION(email: String!): BaseResponseType!
+  REQUEST_VERIFICATION_MUTATION(email: String!): BaseResponseType
+  RESET_PASSWORD_MUTATION(data: ResetPasswordInput!): BaseResponseType!
+  VERIFY_EMAIL_MUTATION(data: VerifiyEmailInputs!): BaseResponseType
+}
+
+type Presentation {
+  content: String!
+  created_at: String!
+  deleted_at: Timestamp!
+  id: Float!
+  last_update: String!
+  owner: Float!
+  title: String!
+}
+
+type PresentationsResponseType {
+  data: [Presentation!]!
+  message: String!
+  status: String!
 }
 
 type Query {
-  CATEGORIES_QUERY: ResponseType!
-  PRESENTATIONS_LIST_QUERY(search: String): ResponseType!
-  TEMPLATES_QUERY(category_id: Float!): ResponseType!
-  TRASHBIN_QUERY: ResponseType!
-  USER_QUERY: String!
+  PRESENTATIONS_LIST_QUERY(search: String): PresentationsResponseType!
   user: String!
 }
 
@@ -55,7 +60,29 @@ input ResetPasswordInput {
 }
 
 type ResponseType {
-  data: JSON!
+  token: String!
+  user: User!
+}
+
+"""
+The javascript `Date` as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+"""
+scalar Timestamp
+
+type User {
+  company_size: String!
+  company_website: String!
+  email: String!
+  full_name: String!
+  id: Float!
+  is_active: Boolean!
+  job: String!
+  password: String!
+  work_field: String!
+}
+
+type UserResponseType {
+  data: ResponseType!
   message: String!
   status: String!
 }

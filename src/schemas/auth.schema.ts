@@ -1,9 +1,31 @@
-import { Arg, Field, InputType, Mutation, Query, Resolver } from "type-graphql";
+import {
+  Arg,
+  Field,
+  InputType,
+  Mutation,
+  ObjectType,
+  Query,
+  Resolver,
+} from "type-graphql";
 import AuthenticationService from "../services/auth.service";
 import MailServices, { EmailTemplates } from "../services/mail.service";
 import User from "../models/user.model";
 import { UserPurposeOfUse } from "../enums/user.enums";
-import Response, { RESPONSE_STATUS, ResponseType } from "../utils/response";
+import Response, { RESPONSE_STATUS, BaseResponseType } from "../utils/response";
+
+// Custom Response Type for login and register mutations
+@ObjectType()
+class ResponseType {
+  @Field(() => User)
+  user!: User;
+  @Field(() => String)
+  token!: String;
+}
+@ObjectType()
+class UserResponseType extends BaseResponseType {
+  @Field(() => ResponseType)
+  data!: ResponseType;
+}
 
 @InputType()
 class ResetPasswordInput {
@@ -53,7 +75,7 @@ class AuthenticationResolver {
     return "";
   }
 
-  @Mutation(() => ResponseType, { nullable: true })
+  @Mutation(() => BaseResponseType, { nullable: true })
   async REQUEST_VERIFICATION_MUTATION(@Arg("email") email: string) {
     const link = await AuthenticationService.verificationRequest(email);
     await MailServices.send({
@@ -63,7 +85,7 @@ class AuthenticationResolver {
     });
     return Response("لینک تایید با موفقیت ارسال شد", RESPONSE_STATUS.SUCCESS);
   }
-  @Mutation(() => ResponseType, { nullable: true })
+  @Mutation(() => BaseResponseType, { nullable: true })
   async VERIFY_EMAIL_MUTATION(
     @Arg("data") verifyEmailData: VerifiyEmailInputs
   ) {
@@ -74,7 +96,7 @@ class AuthenticationResolver {
 
     return Response("ایمیل با موفقیت تایید شد", RESPONSE_STATUS.SUCCESS);
   }
-  @Mutation(() => ResponseType)
+  @Mutation(() => UserResponseType)
   async REGISTER_MUTATION(
     @Arg("data")
     registerData: RegisterInputs
@@ -99,7 +121,7 @@ class AuthenticationResolver {
     );
     return Response("ایمیلی با موفقیت تایید شد", RESPONSE_STATUS.SUCCESS, data);
   }
-  @Mutation(() => ResponseType)
+  @Mutation(() => UserResponseType)
   async LOGIN_WITH_USER_PASSWORD_MUTATION(
     @Arg("data") loginData: LoginWithUserPasswordInput
   ) {
@@ -110,7 +132,7 @@ class AuthenticationResolver {
 
     return Response("با موفقیت وارد شدید", RESPONSE_STATUS.SUCCESS, data);
   }
-  @Mutation(() => ResponseType)
+  @Mutation(() => BaseResponseType)
   async REQUEST_RESET_PASSWORD_MUTATION(@Arg("email") email: string) {
     const link = await AuthenticationService.requestResetPassword(email);
     await MailServices.send({
@@ -123,8 +145,10 @@ class AuthenticationResolver {
       RESPONSE_STATUS.SUCCESS
     );
   }
-  @Mutation(() => ResponseType)
-  async RESET_PASSWORD_MUTATION(@Arg("data") resetPassData: ResetPasswordInput) {
+  @Mutation(() => BaseResponseType)
+  async RESET_PASSWORD_MUTATION(
+    @Arg("data") resetPassData: ResetPasswordInput
+  ) {
     await AuthenticationService.resetPassword(
       resetPassData.token,
       resetPassData.password

@@ -6,12 +6,12 @@ import { engine } from "express-handlebars";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import AuthenticationResolver from "./schemas/auth.schema";
-import UserResolver from "./schemas/user.schema";
+// import UserResolver from "./schemas/user.schema";
 import { CurrentUser } from "./middlewares/current-user.middleware";
 import AuthRequired from "./middlewares/auth-required.middleware";
 import PresentationsResolver from "./schemas/presentations.schema";
-import TrashbinResolver from "./schemas/trashbin.schema";
-import TemplatesResolver from "./schemas/templates.schema";
+// import TrashbinResolver from "./schemas/trashbin.schema";
+// import TemplatesResolver from "./schemas/templates.schema";
 dotenv.config();
 
 const main = async () => {
@@ -40,10 +40,10 @@ const main = async () => {
   const schema = await buildSchema({
     resolvers: [
       AuthenticationResolver,
-      UserResolver,
+      // UserResolver,
       PresentationsResolver,
-      TrashbinResolver,
-      TemplatesResolver,
+      // TrashbinResolver,
+      // TemplatesResolver,
     ],
     emitSchemaFile: true,
   });
