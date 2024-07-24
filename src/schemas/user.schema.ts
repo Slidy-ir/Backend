@@ -1,6 +1,6 @@
 import { Context } from "apollo-server-core";
 import User from "../models/user.model";
-import Response, { RESPONSE_STATUS, ResponseType } from "../utils/response";
+import Response, { RESPONSE_STATUS, BaseResponseType } from "../utils/response";
 import {
   Arg,
   Ctx,
@@ -23,7 +23,7 @@ class UserResolver {
     return "";
   }
 
-  @Mutation(() => ResponseType)
+  @Mutation(() => BaseResponseType)
   async CHANGE_USER_INFORMATION(
     @Arg("data") userInfo: ChangeUserInfoInputs,
     @Ctx() ctx: Context<{ user: number }>

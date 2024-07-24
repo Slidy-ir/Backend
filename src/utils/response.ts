@@ -1,19 +1,18 @@
 import GraphQLJSON from "graphql-type-json";
-import { ObjectType, Field } from "type-graphql";
+import { ObjectType, Field, ClassType } from "type-graphql";
 
 export const enum RESPONSE_STATUS {
   SUCCESS = "success",
   FAILED = "failed",
 }
 
+
 @ObjectType()
-export class ResponseType {
+export class BaseResponseType {
   @Field()
   message!: string;
   @Field()
   status!: RESPONSE_STATUS;
-  @Field(() => GraphQLJSON)
-  data: any;
 }
 
 const Response = (

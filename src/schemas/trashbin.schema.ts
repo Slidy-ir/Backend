@@ -1,18 +1,31 @@
 import Presentation from "../models/presentation.model";
 import presentationService from "../services/presentation.service";
-import Response, { RESPONSE_STATUS, ResponseType } from "../utils/response";
+import Response, { RESPONSE_STATUS, BaseResponseType } from "../utils/response";
 import { Context } from "apollo-server-core";
 
-import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
+import {
+  Arg,
+  Ctx,
+  Field,
+  Mutation,
+  ObjectType,
+  Query,
+  Resolver,
+} from "type-graphql";
 
+@ObjectType()
+class TrashbinResponesType extends BaseResponseType {
+  @Field(() => [Presentation])
+  data!: Presentation[];
+}
 @Resolver()
 class TrashbinResolver {
-  @Query(() => ResponseType)
+  @Query(() => TrashbinResponesType)
   async TRASHBIN_QUERY(@Ctx() ctx: Context<{ user: number }>) {
     const data = await presentationService.getDeletedPresentations(ctx.user);
     return Response("", RESPONSE_STATUS.SUCCESS, data);
   }
-  @Mutation(() => ResponseType)
+  @Mutation(() => BaseResponseType)
   async DELETE_PERSENTATION_PERMENANTLY_MUTATION(
     @Arg("id") id: number,
     @Ctx() ctx: Context<{ user: number }>

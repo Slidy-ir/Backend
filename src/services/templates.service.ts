@@ -17,6 +17,12 @@ class TemplatesService {
     });
     return data;
   }
+  async getTemplate(templated_id: number) {
+    const data = await this.templateRepository.findOne({
+      where: { id: templated_id },
+    });
+    return data;
+  }
   async useTemplate(user: number, template_id: number) {
     const template = await this.templateRepository.findOne({
       where: { id: template_id },
